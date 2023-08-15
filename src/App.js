@@ -1,25 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from "react";
+import { Route, Routes } from "react-router-dom";
+import { initializeIndexedDB } from "./IndexedDB";
+import EditAudio from "./Pages/EditAudio";
+import Home from "./Pages/Home";
+import Navbar from "./components/Navbar";
 
-function App() {
+const App = () => {
+  useEffect(() => {
+    initializeIndexedDB().catch((error) => {
+      console.error("Failed to initialize IndexedDB:", error);
+    });
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Navbar />
+      <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path='/edit' element={<EditAudio />} />
+      </Routes>
+    </>
   );
-}
+};
 
 export default App;

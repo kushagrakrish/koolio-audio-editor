@@ -1,13 +1,31 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.upload-audio {
+  width: 100%;
+  margin-top: 5vh;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: space-between;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.upload-audio i.audio-icon {
+  font-size: 5em;
+}
+
+button.upload-btn {
+  width: 10em;
+  font-size: 1em;
+  padding: 0.5em;
+  background: #6e2e81;
+  border-radius: 999px;
+  color: white;
+  border-color: #5b266b;
+  cursor: pointer;
+}
+
+button.upload-btn:hover {
+  background-color: #2b0038;
 }
