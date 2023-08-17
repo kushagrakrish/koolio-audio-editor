@@ -44,10 +44,20 @@ const AudioEditor = (props) => {
     setZoom(wavesurfer.zoom(minPxPerSec));
   };
 
+  const handleForward = () => {
+    wavesurfer.skip(5);
+  };
+
+  const handleBackward = () => {
+    wavesurfer.skip(-5);
+  };
+
   return (
     <div>
       <div ref={containerRef} style={{ minHeight: "120px" }} />
-
+      <p className='text-lg font-bold text-center mt-5'>
+        Seconds played: {currentTime.toFixed(2)}
+      </p>
       <button
         className='text-xl bg-purple-800 px-5 py-2 text-white mx-auto flex items-center justify-center mt-20'
         onClick={onPlayClick}
@@ -55,9 +65,6 @@ const AudioEditor = (props) => {
         {isPlaying ? "Pause" : "Play"}
       </button>
 
-      <p className='text-lg font-bold text-center mt-5'>
-        Seconds played: {currentTime.toFixed(2)}
-      </p>
       <div>
         <label>
           Zoom:{" "}
@@ -69,6 +76,20 @@ const AudioEditor = (props) => {
             onChange={handleZoomSlider}
           />
         </label>
+      </div>
+      <div className='flex flex-col items-center justify-center gap-4'>
+        <button
+          onClick={handleForward}
+          className='bg-purple-800 p-3 text-white text-lg'
+        >
+          Forward 5s
+        </button>
+        <button
+          onClick={handleBackward}
+          className='bg-purple-800 p-3 text-white text-lg'
+        >
+          Backward 5s
+        </button>
       </div>
     </div>
   );

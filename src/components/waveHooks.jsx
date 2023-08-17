@@ -1,8 +1,9 @@
 // Import React hooks
 
 // Import WaveSurfer
-import WaveSurfer from "https://unpkg.com/wavesurfer.js@7/dist/wavesurfer.esm.js";
+// import WaveSurfer from "https://unpkg.com/wavesurfer.js@7/dist/wavesurfer.esm.js";
 import { useEffect, useState } from "react";
+import WaveSurfer from "wavesurfer.js";
 
 // WaveSurfer hook
 export const useWavesurfer = (containerRef, options) => {
