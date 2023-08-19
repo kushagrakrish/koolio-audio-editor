@@ -89,6 +89,7 @@ import {
   addAudioFile,
   initializeIndexedDB,
   getAllAudioFiles,
+  DB_NAME,
 } from "../IndexedDB";
 
 const UploadAudio = () => {
@@ -126,6 +127,18 @@ const UploadAudio = () => {
     }
   };
 
+  const handleResetIndexedDB = async () => {
+    try {
+      // Close any open connections to the IndexedDB
+      await indexedDB.databases();
+      indexedDB.deleteDatabase(DB_NAME);
+
+      // Reset the uploaded audio files state
+      setUploadedAudioFiles([]);
+    } catch (error) {
+      console.error("Failed to reset IndexedDB:", error);
+    }
+  };
   return (
     <>
       <div className='flex items-center justify-center w-full flex-col'>
@@ -146,6 +159,12 @@ const UploadAudio = () => {
         >
           Upload
         </button>
+        <button
+          onClick={handleResetIndexedDB}
+          className='bg-red-700 text-white p-3 font-semibold rounded-full mt-4 transition-all ease-in delay-75'
+        >
+          Reset Database
+        </button>
 
         {/* Display uploaded audio files */}
         <div className='mt-4'>
@@ -161,7 +180,7 @@ const UploadAudio = () => {
                   setFileURL(URL.createObjectURL(new Blob([audio.data])));
                   navigate("/edit");
                 }}
-                className='cursor-pointer text-blue-500'
+                className='cursor-pointer text-blue-500 text-xl'
               >
                 {audio.name}
               </li>

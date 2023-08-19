@@ -1,4 +1,4 @@
-const DB_NAME = "AudioDB";
+export const DB_NAME = "AudioDB";
 const DB_VERSION = 1;
 const STORE_NAME = "audios";
 
