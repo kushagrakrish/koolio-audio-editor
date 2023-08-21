@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import WaveSurfer from "wavesurfer.js";
 
-import RegionsPlugin from "wavesurfer.js/dist/plugins/regions.esm.js";
-
-import EnvelopePlugin from "wavesurfer.js/dist/plugins/envelope.esm.js";
+import Regions from "wavesurfer.js/plugins/regions";
+import Envelope from "wavesurfer.js/plugins/envelope";
 
 // WaveSurfer hook
 export const useWavesurfer = (containerRef, options, wsRegions) => {
@@ -20,7 +19,7 @@ export const useWavesurfer = (containerRef, options, wsRegions) => {
       container: containerRef.current,
     });
     const envelope = ws.registerPlugin(
-      EnvelopePlugin.create({
+      Envelope.create({
         fadeInEnd: 5,
         fadeOutStart: 15,
         volume: 0.8,
@@ -31,7 +30,7 @@ export const useWavesurfer = (containerRef, options, wsRegions) => {
         dragPointStroke: "rgba(0, 0, 0, 0.5)",
       })
     );
-    const wsRegions = ws.registerPlugin(RegionsPlugin.create());
+    const wsRegions = ws.registerPlugin(Regions.create());
 
     // Give regions a random color when they are created
     const random = (min, max) => Math.random() * (max - min) + min;

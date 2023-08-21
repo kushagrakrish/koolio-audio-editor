@@ -41,7 +41,7 @@
 
 // export default EditAudio;
 
-import Timeline from "https://unpkg.com/wavesurfer.js@7/dist/plugins/timeline.esm.js";
+import Timeline from "wavesurfer.js/dist/plugins/timeline.esm.js";
 import React, { useContext, useEffect, useState } from "react";
 import { getAllAudioFiles, initializeIndexedDB } from "../IndexedDB";
 import AudioEditor from "../components/AudioEditor";
