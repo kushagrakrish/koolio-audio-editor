@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import WaveSurfer from "wavesurfer.js";
-import RegionsPlugin from "https://unpkg.com/wavesurfer.js@7/dist/plugins/regions.esm.js";
-import EnvelopePlugin from "https://unpkg.com/wavesurfer.js@7/dist/plugins/envelope.esm.js";
+
+import RegionsPlugin from "wavesurfer.js/dist/plugins/regions.esm.js";
+
+import EnvelopePlugin from "wavesurfer.js/dist/plugins/envelope.esm.js";
 
 // WaveSurfer hook
 export const useWavesurfer = (containerRef, options, wsRegions) => {
