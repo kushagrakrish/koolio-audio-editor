@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import WaveSurfer from "wavesurfer.js";
 import { useWavesurfer } from "./waveHooks";
 
 const AudioEditor = (props) => {
@@ -7,7 +6,13 @@ const AudioEditor = (props) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [zoom, setZoom] = useState(100); // Initialize zoom level to 100%
-  const wavesurfer = useWavesurfer(containerRef, props);
+  const [wavesurfer, wavesurferObj] = useWavesurfer(containerRef, props); // Use the hook's return values
+
+  const [selectedRegion, setSelectedRegion] = useState(null);
+
+  const handleRegionClick = useCallback((region) => {
+    setSelectedRegion(region);
+  }, []);
 
   // On play button click
   const onPlayClick = useCallback(() => {
@@ -27,20 +32,18 @@ const AudioEditor = (props) => {
       wavesurfer.on("pause", () => setIsPlaying(false)),
       wavesurfer.on("timeupdate", (currentTime) => setCurrentTime(currentTime)),
       wavesurfer.on("zoom", (minPxPerSec) => setZoom(minPxPerSec)),
+      wavesurferObj.on("region-updated", handleRegionClick), // Change this line
     ];
 
     return () => {
       subscriptions.forEach((unsub) => unsub());
+      wavesurferObj.un("region-updated", handleRegionClick); //
     };
-  }, [wavesurfer]);
+  }, [wavesurfer, wavesurferObj, handleRegionClick]);
 
   // Update the zoom level when the slider changes
   const handleZoomSlider = (e) => {
-    // const newZoom = parseInt(e.target.value);
-    // setZoom(newZoom);
-    // wavesurfer.zoom(newZoom / 100);
     const minPxPerSec = e.target.value;
-    // wavesurfer.zoom(minPxPerSec);
     setZoom(wavesurfer.zoom(minPxPerSec));
   };
 
@@ -51,6 +54,66 @@ const AudioEditor = (props) => {
   const handleBackward = () => {
     wavesurfer.skip(-5);
   };
+
+  const handleTrim = () => {
+    if (wavesurferObj && wavesurferObj.regions) {
+      const regions = wavesurferObj.regions.list;
+      const regionKeys = Object.keys(regions);
+
+      if (regionKeys.length > 0) {
+        const selectedRegion = regions[regionKeys[0]];
+        const start = selectedRegion.start;
+        const end = selectedRegion.end;
+
+        // Get the original audio buffer
+        const originalBuffer = wavesurferObj.backend.buffer;
+
+        // Calculate the new buffer length after trimming
+        const newBufferLength =
+          originalBuffer.length - (end - start) * originalBuffer.sampleRate;
+
+        // Create a new audio buffer to hold the trimmed audio
+        const newBuffer = wavesurferObj.backend.ac.createBuffer(
+          originalBuffer.numberOfChannels,
+          newBufferLength,
+          originalBuffer.sampleRate
+        );
+
+        // Copy audio data from original buffer to new buffer, excluding the selected region
+        for (
+          let channel = 0;
+          channel < originalBuffer.numberOfChannels;
+          channel++
+        ) {
+          const originalData = originalBuffer.getChannelData(channel);
+          const newData = newBuffer.getChannelData(channel);
+
+          // Copy data before the selected region
+          const startIdx = Math.floor(start * originalBuffer.sampleRate);
+          newData.set(originalData.subarray(0, startIdx), 0);
+
+          // Copy data after the selected region
+          const endIdx = Math.floor(end * originalBuffer.sampleRate);
+          newData.set(originalData.subarray(endIdx), startIdx);
+        }
+
+        // Load the new buffer into wavesurferObj
+        wavesurferObj.loadDecodedBuffer(newBuffer);
+
+        // Remove the selected region from the waveform
+        selectedRegion.remove();
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (wavesurferObj) {
+      // Listen for region updates
+      wavesurferObj.on("region-updated", (region) => {
+        setSelectedRegion(region);
+      });
+    }
+  }, [wavesurferObj]);
 
   return (
     <div>
@@ -89,6 +152,12 @@ const AudioEditor = (props) => {
           className='bg-purple-800 p-3 text-white text-lg'
         >
           Backward 5s
+        </button>
+        <button
+          className='bg-purple-800 p-3 text-white text-lg'
+          onClick={handleTrim}
+        >
+          Trim
         </button>
       </div>
     </div>

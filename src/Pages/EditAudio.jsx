@@ -41,10 +41,11 @@
 
 // export default EditAudio;
 
+import Timeline from "https://unpkg.com/wavesurfer.js@7/dist/plugins/timeline.esm.js";
 import React, { useContext, useEffect, useState } from "react";
+import { getAllAudioFiles, initializeIndexedDB } from "../IndexedDB";
 import AudioEditor from "../components/AudioEditor";
 import { FileContext } from "../context/FileContext";
-import { getAllAudioFiles, initializeIndexedDB } from "../IndexedDB";
 
 const EditAudio = () => {
   const { fileURL, setFileURL } = useContext(FileContext);
@@ -69,10 +70,6 @@ const EditAudio = () => {
       });
   }, []);
 
-  const handleAudioFileClick = (audioBlob) => {
-    setFileURL(URL.createObjectURL(new Blob([audioBlob]))); // Set the file URL
-  };
-
   return (
     <>
       <h1 className='text-4xl text-purple-800 font-bold m-auto w-full text-center mt-10'>
@@ -83,6 +80,7 @@ const EditAudio = () => {
         waveColor='rgb(200, 0, 200)'
         progressColor='rgb(100, 0, 100)'
         url={fileURL || audioUrl}
+        plugins={[Timeline.create()]}
       />
 
       {/* <div className='mt-4'>
