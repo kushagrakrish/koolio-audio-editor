@@ -12,6 +12,7 @@ const App = () => {
       console.error("Failed to initialize IndexedDB:", error);
     });
   }, []);
+  console.log(2 + 2);
 
   return (
     <>
