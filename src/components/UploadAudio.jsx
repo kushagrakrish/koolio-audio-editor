@@ -117,7 +117,7 @@ const UploadAudio = () => {
         .then((db) => addAudioFile(db, audioBlob, audioName)) // Pass the audio name
         .then(() => {
           setFileURL(URL.createObjectURL(new Blob([audioBlob])));
-          navigate("/edit"); // Navigate to the edit page
+          navigate("/editor"); // Navigate to the edit page
         })
         .catch((error) => {
           console.error("Failed to add audio file to IndexedDB:", error);
@@ -178,7 +178,7 @@ const UploadAudio = () => {
                   // You can set the selected audio file URL and then navigate
                   // Remember to update the below line according to your code structure
                   setFileURL(URL.createObjectURL(new Blob([audio.data])));
-                  navigate("/edit");
+                  navigate("/editor");
                 }}
                 className='cursor-pointer text-blue-500 text-xl'
               >

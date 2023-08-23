@@ -1,19 +1,11 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Route, Routes } from "react-router-dom";
-import { initializeIndexedDB } from "./IndexedDB";
 import EditAudio from "./Pages/EditAudio";
 import Home from "./Pages/Home";
 import PlaylistEditorPage from "./Pages/PlaylistEditorPage";
 import Navbar from "./components/Navbar";
 
 const App = () => {
-  useEffect(() => {
-    initializeIndexedDB().catch((error) => {
-      console.error("Failed to initialize IndexedDB:", error);
-    });
-  }, []);
-  console.log(2 + 2);
-
   return (
     <>
       <Navbar />

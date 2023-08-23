@@ -22,22 +22,6 @@ export function initializeIndexedDB() {
   });
 }
 
-// export async function addAudioFile(db, audioBlob) {
-//   return new Promise((resolve, reject) => {
-//     const transaction = db.transaction(STORE_NAME, "readwrite");
-//     const store = transaction.objectStore(STORE_NAME);
-//     const request = store.add({ data: audioBlob }); // Store the audio data
-
-//     request.onsuccess = () => {
-//       resolve();
-//     };
-
-//     request.onerror = (event) => {
-//       reject(event.target.error);
-//     };
-//   });
-// }
-
 export async function addAudioFile(db, audioBlob, name) {
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(STORE_NAME, "readwrite");
@@ -53,43 +37,6 @@ export async function addAudioFile(db, audioBlob, name) {
     };
   });
 }
-
-// export async function getAllAudioFiles(db) {
-//   return new Promise((resolve, reject) => {
-//     const transaction = db.transaction(STORE_NAME, "readonly");
-//     const store = transaction.objectStore(STORE_NAME);
-//     const request = store.getAll();
-
-//     request.onsuccess = (event) => {
-//       resolve(event.target.result);
-//     };
-
-//     request.onerror = (event) => {
-//       reject(event.target.error);
-//     };
-//   });
-// }
-
-// export async function getAllAudioFiles(db) {
-//   return new Promise((resolve, reject) => {
-//     const transaction = db.transaction(STORE_NAME, "readonly");
-//     const store = transaction.objectStore(STORE_NAME);
-//     const request = store.getAll();
-
-//     request.onsuccess = (event) => {
-//       // Modify each object to include the 'name' property
-//       const audioFilesWithNames = event.target.result.map((audio) => ({
-//         name: audio.name, // Replace 'name' with the actual property name
-//         data: audio.data,
-//       }));
-//       resolve(audioFilesWithNames);
-//     };
-
-//     request.onerror = (event) => {
-//       reject(event.target.error);
-//     };
-//   });
-// }
 
 export async function getAllAudioFiles(db) {
   return new Promise((resolve, reject) => {
