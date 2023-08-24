@@ -29,7 +29,7 @@ const PlaylistEditorPage = () => {
   return (
     <div className='App'>
       <h1 className='text-center text-2xl font-bold mb-10'>Audio Editor</h1>
-      <PlaylistEditor audioUrl={fileURL || audioUrl} />
+      <PlaylistEditor audioUrl={audio} />
     </div>
   );
 };

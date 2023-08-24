@@ -1,9 +1,14 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import WaveformPlaylist from "waveform-playlist";
+import EventEmitter from "wavesurfer.js/dist/event-emitter";
 
 const PlaylistEditor = ({ audioUrl }) => {
   const playlistRef = useRef(null);
   let playlistInstance = null; // Store the playlist instance for reference
+
+  let isDragging = false;
+  let selectionStart = 5;
+  let selectionEnd = 13;
 
   useEffect(() => {
     if (audioUrl) {
@@ -13,9 +18,10 @@ const PlaylistEditor = ({ audioUrl }) => {
         mono: true,
         waveHeight: 70,
         state: "cursor",
+        seekStyle: "fill",
         colors: {
           waveOutlineColor: "pink",
-          timeColor: "red",
+          timeColor: "white",
           fadeColor: "green",
         },
         controls: {
@@ -30,6 +36,7 @@ const PlaylistEditor = ({ audioUrl }) => {
           {
             name: "new",
             src: audioUrl,
+            customClass: "vocals",
             fadeIn: {
               duration: 5,
             },
@@ -38,13 +45,51 @@ const PlaylistEditor = ({ audioUrl }) => {
               duration: 10,
             },
             selected: {
-              start: 0,
-              end: 5,
+              // start time of selection in seconds, relative to the playlist
+              start: selectionStart,
+
+              // end time of selection in seconds, relative to the playlist
+              end: selectionEnd,
             },
           },
         ])
         .then(() => {
           const ee = playlistInstance.getEventEmitter();
+          console.log(ee.emit("select"));
+          console.log(playlistInstance.getTimeSelection());
+          console.log(playlistInstance);
+          // Enable user-driven region selection
+          ee.on("select", (start, end, track) => {
+            // Do something with start and end times (e.g., store in state)
+            // setName(!name);
+            console.log("Selected region:", start, end, track);
+          });
+
+          ee.on("mousedown", (e) => {
+            console.log(e);
+            if (e.target.tagName === "CANVAS") {
+              isDragging = true;
+              selectionStart = playlistInstance.getCurrentTime();
+              // Update the UI to indicate drag selection start...
+              console.log(selectionStart);
+            }
+          });
+
+          ee.on("mousemove", (e) => {
+            if (isDragging) {
+              selectionEnd = playlistInstance.getCurrentTime();
+              // Update the UI to highlight the selected region...
+              console.log(selectionEnd);
+            }
+          });
+
+          ee.on("mouseup", () => {
+            if (isDragging) {
+              isDragging = false;
+              // Update the UI to remove the selected region highlight...
+              // Perform actions based on selectionStart and selectionEnd...
+            }
+          });
 
           document
             .getElementById("btn-play")
@@ -57,56 +102,10 @@ const PlaylistEditor = ({ audioUrl }) => {
             .addEventListener("click", function () {
               ee.emit("pause");
             });
-
           document
             .getElementById("btn-trim")
             .addEventListener("click", function () {
-              const currentTime = playlistInstance.getCurrentTime();
-              const selectedRegion = {
-                start: 14, // Adjust these values based on your needs
-                end: 17,
-              };
-
-              // Get the underlying AudioBuffer for the track
-              const audioBuffer = playlistInstance.tracks[0].buffer;
-
-              // Create a new AudioContext
-              const audioContext = new AudioContext();
-
-              // Create a new AudioBuffer with the trimmed audio data
-              const duration = selectedRegion.end - selectedRegion.start;
-              const startFrame = Math.floor(
-                selectedRegion.start * audioBuffer.sampleRate
-              );
-              const endFrame = Math.floor(
-                selectedRegion.end * audioBuffer.sampleRate
-              );
-              const frameCount = endFrame - startFrame;
-              const channels = audioBuffer.numberOfChannels;
-              const trimmedBuffer = audioContext.createBuffer(
-                channels,
-                frameCount,
-                audioBuffer.sampleRate
-              );
-
-              for (let channel = 0; channel < channels; channel++) {
-                const sourceChannel = audioBuffer.getChannelData(channel);
-                const targetChannel = trimmedBuffer.getChannelData(channel);
-
-                for (let frame = 0; frame < frameCount; frame++) {
-                  targetChannel[frame] = sourceChannel[startFrame + frame];
-                }
-              }
-
-              // Create a new AudioBufferSourceNode
-              const source = audioContext.createBufferSource();
-              source.buffer = trimmedBuffer;
-
-              // Connect the source to the destination (e.g., speakers)
-              source.connect(audioContext.destination);
-
-              // Start playing the trimmed audio
-              source.start();
+              ee.emit("trim", (2, 10));
             });
         });
     }
@@ -114,7 +113,7 @@ const PlaylistEditor = ({ audioUrl }) => {
 
   return (
     <div>
-      <div ref={playlistRef}></div>
+      <div id='CANVAS' ref={playlistRef}></div>
       <div>
         <button
           className='bg-purple-800 p-4 text-lg text-white'

@@ -29,3 +29,7 @@ button.upload-btn {
 button.upload-btn:hover {
   background-color: #2b0038;
 }
+
+.vocals {
+  background-color: gray;
+}
